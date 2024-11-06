@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>LINE LIFF Get Access Token</title>
+    <title>LINE LIFF Authorization Code Flow</title>
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/versions/2.22.3/sdk.js"></script>
-
 </head>
 <body>
-    <h1>LINE LIFF Access Token Example</h1>
-    <button onclick="login()">Login and Get Access Token</button>
+    <h1>LINE LIFF Authorization Code Flow</h1>
+    <button onclick="login()">Login and Get Authorization Code</button>
     <pre id="result"></pre>
 
     <script>
@@ -15,45 +14,65 @@
         async function initializeLiff() {
             try {
                 await liff.init({ liffId: "1657883918-jXRmAqJn" });
-                // Check if the user is already logged in
+
+                // Check if the user is logged in
                 if (!liff.isLoggedIn()) {
                     liff.login();
                 } else {
-                    // Get access token
+                    // User is already logged in
                     const accessToken = liff.getAccessToken();
-                    document.getElementById("result").innerText = `Access Token: ${accessToken}`;
-                    console.log("Token", accessToken);
-                    
-                    // Optional: Send access token to your backend
-                    // sendAccessTokenToBackend(accessToken);
+                    const idToken = liff.getIDToken();
+
+                    // Log the tokens
+                    console.log("Access Token:", accessToken);
+                    console.log("ID Token:", idToken);
+
+                    // Optional: Send the authorization code and tokens to your backend for further processing
+                    // sendAuthCodeToBackend(authCode);
                 }
             } catch (error) {
                 console.error("LIFF initialization failed:", error);
             }
         }
 
-        // Call LIFF login and retrieve access token
+        // Login and handle the redirect
         function login() {
-            initializeLiff();
+            const url = window.location.href;
+
+            // Check if the URL contains the authorization code after the redirect
+            const urlParams = new URLSearchParams(window.location.search);
+            const authCode = urlParams.get('code'); // Extract the 'code' parameter
+
+            if (authCode) {
+                // If the authorization code exists, handle the flow
+                handleAuthorizationCode(authCode);
+            } else {
+                // If no code is present, start the login process
+                initializeLiff();
+            }
         }
 
-        // Optional: Send access token to backend
-        // function sendAccessTokenToBackend(accessToken) {
-        //     fetch('https://your-backend.com/api/LineToken', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify({ token: accessToken })
-        //     })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         console.log("Response from backend:", data);
-        //     })
-        //     .catch(error => {
-        //         console.error("Error sending access token to backend:", error);
-        //     });
-        // }
+        // Handle the authorization code (exchange it for tokens)
+        function handleAuthorizationCode(authCode) {
+            console.log("Authorization Code:", authCode);
+
+            // Optional: Send the authorization code to your backend to exchange for tokens
+            // Example:
+            // fetch('https://your-backend.com/api/exchange-auth-code', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     },
+            //     body: JSON.stringify({ code: authCode })
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     console.log("Tokens from backend:", data);
+            // })
+            // .catch(error => {
+            //     console.error("Error exchanging authorization code:", error);
+            // });
+        }
     </script>
 </body>
 </html>
