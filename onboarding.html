@@ -1,12 +1,13 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
-    <title>LINE LIFF Authorization Code Flow</title>
+    <title>LINE LIFF Get Access Token</title>
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/versions/2.22.3/sdk.js"></script>
+
 </head>
 <body>
-    <h1>LINE LIFF Authorization Code Flow</h1>
-    <button onclick="login()">Login and Get Authorization Code</button>
+    <h1>LINE LIFF Access Token Example</h1>
+    <button onclick="login()">Login and Get Access Token</button>
     <pre id="result"></pre>
 
     <script>
@@ -14,65 +15,92 @@
         async function initializeLiff() {
             try {
                 await liff.init({ liffId: "1657883918-jXRmAqJn" });
-
-                // Check if the user is logged in
+                // Check if the user is already logged in
                 if (!liff.isLoggedIn()) {
                     liff.login();
                 } else {
-                    // User is already logged in
+                    // Get access token
                     const accessToken = liff.getAccessToken();
-                    const idToken = liff.getIDToken();
-
-                    // Log the tokens
-                    console.log("Access Token:", accessToken);
-                    console.log("ID Token:", idToken);
-
-                    // Optional: Send the authorization code and tokens to your backend for further processing
-                    // sendAuthCodeToBackend(authCode);
+                    document.getElementById("result").innerText = `Access Token: ${accessToken}`;
+                    console.log("Token", accessToken);
+                    
+                    // Optional: Send access token to your backend
+                    // sendAccessTokenToBackend(accessToken);
                 }
             } catch (error) {
                 console.error("LIFF initialization failed:", error);
             }
         }
 
-        // Login and handle the redirect
+        // Call LIFF login and retrieve access token
         function login() {
-            const url = window.location.href;
+            initializeLiff();
+        }
 
-            // Check if the URL contains the authorization code after the redirect
+        // Optional: Send access token to backend
+        // function sendAccessTokenToBackend(accessToken) {
+        //     fetch('https://your-backend.com/api/LineToken', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify({ token: accessToken })
+        //     })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         console.log("Response from backend:", data);
+        //     })
+        //     .catch(error => {
+        //         console.error("Error sending access token to backend:", error);
+        //     });
+        // }
+    </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LINE OAuth2 Authorization Code</title>
+</head>
+<body>
+    <h1>LINE OAuth2 Authorization Code Example</h1>
+    <button onclick="login()">Get Authorization Code</button>
+    <pre id="result"></pre>
+
+    <script>
+        // ใช้ LIFF หรือ OAuth2.0 เพื่อขอ authorization code
+        function login() {
+            // กำหนด URL สำหรับการขอ authorization code
+            const clientId = '1657883918'; // แทนที่ด้วย Channel ID ของคุณ
+            const redirectUri = encodeURIComponent('https://wk-ton.github.io/onboarding.github.io/onboarding.html'); // แทนที่ด้วย redirect URI ของคุณ
+            const state = 'state'; // สามารถใช้ค่าสุ่มเพื่อป้องกัน CSRF
+            const scope = 'profile openid'; // ขอบเขตที่ต้องการ
+            const authorizationUrl = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}`;
+
+            // รีไดเร็กต์ผู้ใช้ไปยัง URL ของ LINE OAuth2
+            window.location.href = authorizationUrl;
+        }
+
+        function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
-            const authCode = urlParams.get('code'); // Extract the 'code' parameter
+            return urlParams.get(param);
+        }
 
-            if (authCode) {
-                // If the authorization code exists, handle the flow
-                handleAuthorizationCode(authCode);
-            } else {
-                // If no code is present, start the login process
-                initializeLiff();
+        // เช็คหากมี query parameter 'code' ใน URL
+        window.onload = function() {
+            const authorizationCode = getQueryParam('code');
+            const state = getQueryParam('state');
+            
+            // ถ้ามี authorization code ก็แสดงผลบนหน้าเว็บ
+            if (authorizationCode) {
+                document.getElementById("result").innerText = `Authorization Code: ${authorizationCode}\nState: ${state}`;
+                console.log("Authorization Code:", authorizationCode);
+                console.log("State:", state);
             }
-        }
-
-        // Handle the authorization code (exchange it for tokens)
-        function handleAuthorizationCode(authCode) {
-            console.log("Authorization Code:", authCode);
-
-            // Optional: Send the authorization code to your backend to exchange for tokens
-            // Example:
-            // fetch('https://your-backend.com/api/exchange-auth-code', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     },
-            //     body: JSON.stringify({ code: authCode })
-            // })
-            // .then(response => response.json())
-            // .then(data => {
-            //     console.log("Tokens from backend:", data);
-            // })
-            // .catch(error => {
-            //     console.error("Error exchanging authorization code:", error);
-            // });
-        }
+        };
     </script>
 </body>
 </html>
+
