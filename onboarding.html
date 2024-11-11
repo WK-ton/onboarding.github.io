@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>LINE LIFF Get Access Token</title>
@@ -56,51 +56,4 @@
         // }
     </script>
 </body>
-</html> -->
-
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>LINE OAuth2 Authorization Code</title>
-</head>
-<body>
-    <h1>LINE OAuth2 Authorization Code Example</h1>
-    <button onclick="login()">Get Authorization Code</button>
-    <pre id="result"></pre>
-
-    <script>
-        // ใช้ LIFF หรือ OAuth2.0 เพื่อขอ authorization code
-        function login() {
-            // กำหนด URL สำหรับการขอ authorization code
-            const clientId = '1657883918'; // แทนที่ด้วย Channel ID ของคุณ
-            const redirectUri = encodeURIComponent('https://wk-ton.github.io/onboarding.github.io/onboarding.html'); // แทนที่ด้วย redirect URI ของคุณ
-            const state = 'state'; // สามารถใช้ค่าสุ่มเพื่อป้องกัน CSRF
-            const scope = 'profile openid'; // ขอบเขตที่ต้องการ
-            const authorizationUrl = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}`;
-
-            // รีไดเร็กต์ผู้ใช้ไปยัง URL ของ LINE OAuth2
-            window.location.href = authorizationUrl;
-        }
-
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
-        }
-
-        // เช็คหากมี query parameter 'code' ใน URL
-        window.onload = function() {
-            const authorizationCode = getQueryParam('code');
-            const state = getQueryParam('state');
-            
-            // ถ้ามี authorization code ก็แสดงผลบนหน้าเว็บ
-            if (authorizationCode) {
-                document.getElementById("result").innerText = `Authorization Code: ${authorizationCode}\nState: ${state}`;
-                console.log("Authorization Code:", authorizationCode);
-                console.log("State:", state);
-            }
-        };
-    </script>
-</body>
 </html>
-
