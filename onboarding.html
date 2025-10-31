@@ -11,27 +11,30 @@
     <pre id="result"></pre>
 
     <script>
-        // Initialize LIFF
         async function initializeLiff() {
             try {
                 await liff.init({ liffId: "1657883918-jXRmAqJn" });
-                // Check if the user is already logged in
+        
                 if (!liff.isLoggedIn()) {
                     liff.login();
                 } else {
                     const accessToken = liff.getAccessToken();
-                    const idToken = liff.getIDToken();
+                    const idToken = liff.getIDToken(); // <-- This gets the ID Token
+        
+                    document.getElementById("result").innerText = 
+                        `Access Token: ${accessToken}\nID Token: ${idToken}`;
                     
-                    document.getElementById("result").innerText = `idToken: ${idToken}`;
-                    console.log("AccessToken", accessToken);
-                    console.log("idToken", idToken)
+                    console.log("Access Token:", accessToken);
+                    console.log("ID Token:", idToken);
+        
+                    // Optional: Send tokens to your backend
+                    // sendTokensToBackend(accessToken, idToken);
                 }
             } catch (error) {
                 console.error("LIFF initialization failed:", error);
             }
         }
-
-        // Call LIFF login and retrieve access token
+        
         function login() {
             initializeLiff();
         }
