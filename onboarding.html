@@ -19,13 +19,12 @@
                 if (!liff.isLoggedIn()) {
                     liff.login();
                 } else {
-                    // Get access token
                     const accessToken = liff.getAccessToken();
-                    document.getElementById("result").innerText = `Access Token: ${accessToken}`;
-                    console.log("Token", accessToken);
+                    const idToken = liff.getIDToken();
                     
-                    // Optional: Send access token to your backend
-                    // sendAccessTokenToBackend(accessToken);
+                    document.getElementById("result").innerText = `idToken: ${idToken}`;
+                    console.log("AccessToken", accessToken);
+                    console.log("idToken", idToken)
                 }
             } catch (error) {
                 console.error("LIFF initialization failed:", error);
@@ -36,24 +35,6 @@
         function login() {
             initializeLiff();
         }
-
-        // Optional: Send access token to backend
-        // function sendAccessTokenToBackend(accessToken) {
-        //     fetch('https://your-backend.com/api/LineToken', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify({ token: accessToken })
-        //     })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         console.log("Response from backend:", data);
-        //     })
-        //     .catch(error => {
-        //         console.error("Error sending access token to backend:", error);
-        //     });
-        // }
     </script>
 </body>
 </html>
